@@ -42,7 +42,7 @@ INCS_Debug := \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/uv/include \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/zlib \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/v8/include \
-	-I/home/utkarsh/dev/npm/node_modules/node-addon-api
+	-I/home/utkarsh/dev/node-snowflake/node_modules/node-addon-api
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=snowflake' \
@@ -81,7 +81,7 @@ INCS_Release := \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/uv/include \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/zlib \
 	-I/home/utkarsh/.node-gyp/10.16.3/deps/v8/include \
-	-I/home/utkarsh/dev/npm/node_modules/node-addon-api
+	-I/home/utkarsh/dev/node-snowflake/node_modules/node-addon-api
 
 OBJS := \
 	$(obj).target/$(TARGET)/cppsrc/main.o
