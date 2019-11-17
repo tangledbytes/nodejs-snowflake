@@ -1,11 +1,13 @@
 const { nextID } = require('./build/Release/snowflake.node');
 const { getMac } = require('getmac');
 
-let MACID = null;
-let lastTimestamp = 1546300800000;
+const SEQUENCE_BITS = 12;
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
+const maxSequence = (2 ** SEQUENCE_BITS) - 1
+
 let sequence = 0;
-const maxSequence = (2 ** 12) - 1
+let lastTimestamp = 1546300800000;
+let MACID = null;
 
 getMac((err, macAddress) => {
     if (err) throw new Error(err);
@@ -24,6 +26,8 @@ const sendRequest = (currentTimestamp, macID) => {
     else {
         sequence = 0;
     }
-    console.log(nextID(currentTimestamp, lastTimestamp, sequence, macID));
+
     lastTimestamp = currentTimestamp;
+
+    return nextID(currentTimestamp, lastTimestamp, sequence, macID);
 }

@@ -11,20 +11,15 @@ int NODE_ID_BITS = 10;
 int SEQUENCE_BITS = 12;
 
 uint64_t maxNodeId = std::pow(2, NODE_ID_BITS) - 1;
-uint64_t maxSequence = std::pow(2, SEQUENCE_BITS) - 1;
-
-uint64_t sequence = 0;
 
 int nodeID(std::string macID)
 {
     return std::hash<std::string>()(macID) % maxNodeId;
 }
 
-int NODEID = 0;
-
 uint64_t nextID(uint64_t currentTimestamp, uint64_t lastTimestamp, uint64_t sequence, std::string macID)
 {
-    NODEID = nodeID(macID);
+    int NODEID = nodeID(macID);
     uint64_t id = currentTimestamp << (TOTAL_BITS - EPOCH_BITS);
     id |= (NODEID << (TOTAL_BITS - EPOCH_BITS - NODE_ID_BITS));
     id |= sequence;
@@ -51,9 +46,33 @@ Napi::Number nextIDWrapped(const Napi::CallbackInfo &info)
     return Napi::Number::New(env, returnValue);
 }
 
+uint64_t getTimestamp(uint64_t uniqueID)
+{
+    uint64_t timestamp = uniqueID >> (TOTAL_BITS - EPOCH_BITS);
+
+    return timestamp;
+}
+
+Napi::Number getTimestampWrapped(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1)
+        Napi::TypeError::New(env, "No argument provided").ThrowAsJavaScriptException();
+    if (!info[0].IsNumber())
+        Napi::TypeError::New(env, "Expected a number").ThrowAsJavaScriptException();
+
+    Napi::Number first = info[0].As<Napi::Number>();
+
+    uint64_t returnValue = getTimestamp(first.Int64Value());
+
+    return Napi::Number::New(env, returnValue);
+}
+
 Napi::Object InitAll(Napi::Env env, Napi::Object exports)
 {
     exports.Set("nextID", Napi::Function::New(env, nextIDWrapped));
+    exports.Set("getTimestamp", Napi::Function::New(env, getTimestampWrapped));
     return exports;
 }
 
