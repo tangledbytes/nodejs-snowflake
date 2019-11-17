@@ -45,7 +45,7 @@ export class UniqueID {
     }
 
     getTimestampFromID(id: number): number {
-        return getTimestamp(id);
+        return getTimestamp(id) + this.CUSTOM_EPOCH;
     }
 
     getMacID(): string {
