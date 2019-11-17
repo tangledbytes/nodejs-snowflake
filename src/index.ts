@@ -1,4 +1,5 @@
-const UniqueID = require('./generateUniqueID');
+// const { UniqueID } = require('./generateUniqueID');
+import { UniqueID } from './generateUniqueID';
 
 const generator = new UniqueID();
 
