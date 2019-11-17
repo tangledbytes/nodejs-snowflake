@@ -1,14 +1,14 @@
 {
-  "name": "idgen",
+  "name": "node-snowflake",
   "version": "1.0.0",
-  "description": "",
+  "description": "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)",
   "main": "index.js",
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean"
   },
-  "author": "",
+  "author": "Utkarsh Srivastava",
   "license": "ISC",
   "devDependencies": {
     "node-gyp": "^6.0.1"
