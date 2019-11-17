@@ -1,0 +1,1 @@
+cmd_Release/obj.target/snowflake.node := g++ -shared -pthread -rdynamic -m64  -Wl,-soname=snowflake.node -o Release/obj.target/snowflake.node -Wl,--start-group Release/obj.target/snowflake/cppsrc/main.o Release/obj.target/node_modules/node-addon-api/src/nothing.a -Wl,--end-group 

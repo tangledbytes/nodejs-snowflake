@@ -1,0 +1,20 @@
+{
+  "name": "idgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "gypfile": true,
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "node-gyp": "^6.0.1"
+  },
+  "dependencies": {
+    "getmac": "^1.5.0",
+    "node-addon-api": "^1.7.1"
+  }
+}
