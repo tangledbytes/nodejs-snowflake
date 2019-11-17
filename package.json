@@ -5,6 +5,15 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "gypfile": true,
+  "keywords": [
+    "node.js",
+    "nodejs",
+    "snowflake",
+    "twitter",
+    "id",
+    "generator",
+    "n-api"
+  ],
   "scripts": {
     "build": "node-gyp rebuild && tsc",
     "clean": "node-gyp clean",
