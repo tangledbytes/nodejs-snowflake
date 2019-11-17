@@ -19,6 +19,7 @@ export declare class UniqueID {
     private _MACID;
     private _lastTimestamp;
     private _sequence;
+    private _FORMATTEDMACID;
     constructor(customEpoch?: number);
     /**
      * Initialise the mac id for internal computations

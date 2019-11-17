@@ -26,6 +26,7 @@ export class UniqueID {
     private _MACID: string = '';
     private _lastTimestamp = CUSTOM_EPOCH;
     private _sequence = 0;
+    private _FORMATTEDMACID: string = '';
 
     constructor(customEpoch?: number) {
         this._CUSTOM_EPOCH = customEpoch || CUSTOM_EPOCH;
@@ -35,8 +36,9 @@ export class UniqueID {
      * Initialise the mac id for internal computations
      */
     async init(): Promise<void> {
-        const { macIDString } = await getMacID();
+        const { macIDString, macID } = await getMacID();
         this._MACID = macIDString;
+        this._FORMATTEDMACID = macID;
     }
 
     /**
@@ -79,6 +81,6 @@ export class UniqueID {
     }
 
     getMacID(): string {
-        return this._MACID;
+        return this._FORMATTEDMACID;
     }
 }
