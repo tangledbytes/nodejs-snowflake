@@ -1,6 +1,6 @@
 {
-  "name": "node-snowflake",
-  "version": "1.0.0",
+  "name": "nodejs-snowflake",
+  "version": "1.0.2",
   "description": "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,8 +12,13 @@
     "napi-build": "node-gyp rebuild",
     "prepare": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/utkarsh-pro/node-snowflake"
+  },
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "build/**/*"
   ],
   "author": "Utkarsh Srivastava",
   "license": "ISC",
