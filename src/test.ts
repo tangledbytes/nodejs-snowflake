@@ -18,6 +18,4 @@ const benchmark = (totalTime: string, Function: Function) => {
 }
 
 // benchmark('1s', () => uid.getUniqueID('number'));
-// console.log(uid.getUniqueID('number'));
-benchmark('1s', () => uid.getUniqueID());
-console.log(uid.getUniqueID());
+benchmark('10s', () => uid.getUniqueID());

@@ -33,8 +33,7 @@ export declare class UniqueID {
      * @param id {number} id generated through getUniqueID method
      * @returns {number} timestamp of id creations
      */
-    getTimestampFromID(id: number): number;
-    getMacID(): string;
+    getTimestampFromID(id: number | string): number;
 }
 export {};
 //# sourceMappingURL=generateUniqueID.d.ts.map

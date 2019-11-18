@@ -63,11 +63,7 @@ export class UniqueID {
      * @param id {number} id generated through getUniqueID method
      * @returns {number} timestamp of id creations
      */
-    getTimestampFromID(id: number): number {
+    getTimestampFromID(id: number | string): number {
         return getTimestamp(id) + this._CUSTOM_EPOCH;
-    }
-
-    getMacID(): string {
-        return this._FORMATTEDMACID;
     }
 }
