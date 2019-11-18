@@ -48,7 +48,7 @@ npm run benchmark
 # --type -> Return type of the id (could be number or string)
 # --interval -> Time interval in which id generation function should invoked
 # UNITS OF TIME
-# 1s = 1 second, 1ms = 1 millisecond, 1u = 1 microsecond
+# 1s = 1 second, 1m = 1 millisecond, 1u = 1 microsecond
 
 npm run benchmark -- --time=2s --type=number --interval=1u
 
