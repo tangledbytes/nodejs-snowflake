@@ -19,10 +19,18 @@ npm install nodejs-snowflake --save
 
 const { UniqueID } = require('nodejs-flake');
 
-const uid = new UniqueID(); // A custom epoch can also be passed into the constructor default is 1546300800000 (01-01-2019)
+const uid = new UniqueID(); 
+
+// A custom epoch can also be passed into the constructor default is 1546300800000 (01-01-2019)
 // const uid = new UniqueID(customEpoch);
 
-const ID = uid.getUniqueID(); // 116321924208963580 -> 64 bit id as a string
-const ID_AS_NUMBER = uid.getUniqueID('number'); // 116321924208963580 -> 64 bit id as a number
-uid.getTimestampFromID(ID); // 1574034107888 -> epoch timestamp of creation of the id independent of the machine it was created on
+// Returns a 64 bit id as a string
+const ID = uid.getUniqueID(); // 116321924208963580
+
+// Returns a 64 bit id as a number
+const ID_AS_NUMBER = uid.getUniqueID('number'); // 116321924208963580
+
+// Returns the epoch timestamp of creation of the id independent of the machine it was created
+uid.getTimestampFromID(ID); // 1574034107888
+
 ```
