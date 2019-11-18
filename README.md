@@ -37,3 +37,19 @@ uid.getTimestampFromID(ID); // 1574034107888
 uid.getTimestampFromID(ID_AS_NUMBER) // 1574034107888
 
 ```
+
+## Basic benchmark
+```bash
+# Run for 1sec while invoking function every ms (default)
+npm run benchmark 
+
+# All the arguments
+# --time -> Total time for which the id should be generated
+# --type -> Return type of the id (could be number or string)
+# --interval -> Time interval in which id generation function should invoked
+# UNITS OF TIME
+# 1s = 1 second, 1ms = 1 millisecond, 1u = 1 microsecond
+
+npm run benchmark -- --time=2s --type=number --interval=1u
+
+```
