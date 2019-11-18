@@ -57,13 +57,28 @@ export class UniqueID {
     }
 
     /**
+     * Promisified unique id function
+     * @returns {Promise<string | number>} promise to a unique 64 bit long id
+     */
+    async asyncGetUniqueID(return_type: return_type = 'string'): Promise<string | number> {
+        return new Promise(resolve => resolve(this.getUniqueID(return_type)))
+    }
+
+    /**
      * Retrieves the epoch/unix timestamp at which the ID was generated
      * irrespective of the machine it was generated on, PROVIDED no or same 
      * custom epoch was used in generation
-     * @param id {number} id generated through getUniqueID method
+     * @param {number | string} id generated through getUniqueID method
      * @returns {number} timestamp of id creations
      */
     getTimestampFromID(id: number | string): number {
         return getTimestamp(id) + this._CUSTOM_EPOCH;
+    }
+
+    /**
+     * @returns MAC address being used internally
+     */
+    get macID(): string {
+        return this._FORMATTEDMACID;
     }
 }

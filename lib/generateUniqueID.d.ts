@@ -27,13 +27,22 @@ export declare class UniqueID {
      */
     getUniqueID(return_type?: return_type): string | number;
     /**
+     * Promisified unique id function
+     * @returns {Promise<string | number>} promise to a unique 64 bit long id
+     */
+    asyncGetUniqueID(return_type?: return_type): Promise<string | number>;
+    /**
      * Retrieves the epoch/unix timestamp at which the ID was generated
      * irrespective of the machine it was generated on, PROVIDED no or same
      * custom epoch was used in generation
-     * @param id {number} id generated through getUniqueID method
+     * @param {number | string} id generated through getUniqueID method
      * @returns {number} timestamp of id creations
      */
     getTimestampFromID(id: number | string): number;
+    /**
+     * @returns MAC address being used internally
+     */
+    get macID(): string;
 }
 export {};
 //# sourceMappingURL=generateUniqueID.d.ts.map
