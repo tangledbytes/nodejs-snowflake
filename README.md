@@ -30,7 +30,10 @@ const ID = uid.getUniqueID(); // 116321924208963580
 // Returns a 64 bit id as a number
 const ID_AS_NUMBER = uid.getUniqueID('number'); // 116321924208963580
 
-// Returns the epoch timestamp of creation of the id independent of the machine it was created
+// Returns the epoch timestamp of creation of the id 
+// independent of the machine it was created
 uid.getTimestampFromID(ID); // 1574034107888
+
+uid.getTimestampFromID(ID_AS_NUMBER) // 1574034107888
 
 ```
