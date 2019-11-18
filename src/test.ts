@@ -1,9 +1,23 @@
 import UniqueID from './index';
+import NanoTimer from 'nanotimer';
+
+const timer = new NanoTimer();
 
 const uid = new UniqueID();
-let ID = null;
 
-setInterval(() => {
-    ID = uid.getUniqueID();
-    console.log(ID, uid.getTimestampFromID(ID), uid.getMacID());
-}, 1)
+const benchmark = (totalTime: string, Function: Function) => {
+    let times = 0;
+    timer.setInterval(() => {
+        times++;
+        Function();
+    }, '', '1u');
+    timer.setTimeout((timer: any) => {
+        timer.clearInterval();
+        console.log('[TOTAL ITERATIONS]:', times);
+    }, [timer], totalTime)
+}
+
+// benchmark('1s', () => uid.getUniqueID('number'));
+// console.log(uid.getUniqueID('number'));
+benchmark('1s', () => uid.getUniqueID());
+console.log(uid.getUniqueID());

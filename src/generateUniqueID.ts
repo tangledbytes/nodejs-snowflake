@@ -1,9 +1,11 @@
-const { nextID, getTimestamp } = require('../build/Release/snowflake');
+const { nextID, getTimestamp, nextIDString } = require('../build/Release/snowflake');
 import getMacID from './getMacID';
 
 const SEQUENCE_BITS = 12;
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
 const maxSequence = Math.pow(2, SEQUENCE_BITS) - 1;
+
+type return_type = 'string' | 'number';
 
 /**
  * Constructs a UniqueID object which stores method for generation
@@ -32,34 +34,26 @@ export class UniqueID {
         const { macIDString, macID } = getMacID();
         this._MACID = macIDString;
         this._FORMATTEDMACID = macID;
+        if (!this._MACID) throw new Error('No MAC ADDRESS found to initialise');
     }
 
     /**
      * Generates a unique time sortable 64 bit number using native code
-     * @returns {number} The unique id
+     * @returns {string | number} the unique id
      */
-    getUniqueID(): number {
-        if (this._MACID) {
-            const currentTimestamp = Date.now();
-            const customCurrentTimeStamp = currentTimestamp - this._CUSTOM_EPOCH;
-            const customLastTimestamp = this._lastTimestamp - this._CUSTOM_EPOCH;
-            if (customCurrentTimeStamp === customLastTimestamp) {
-                this._sequence = (this._sequence + 1) & maxSequence;
-                if (this._sequence === 0) {
-                    return this.getUniqueID();
-                }
-            }
-            else {
-                this._sequence = 0;
-            }
-
-            this._lastTimestamp = currentTimestamp;
-
-            return nextID(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID);
+    getUniqueID(return_type: return_type = 'string'): string | number {
+        const currentTimestamp = Date.now();
+        const customCurrentTimeStamp = currentTimestamp - this._CUSTOM_EPOCH;
+        const customLastTimestamp = this._lastTimestamp - this._CUSTOM_EPOCH;
+        if (customCurrentTimeStamp === customLastTimestamp) {
+            this._sequence = (this._sequence + 1) & maxSequence;
+            if (this._sequence === 0) return this.getUniqueID(return_type);
         }
-        else {
-            throw new Error('No MAC ADDRESS found to initialise');
-        }
+        else this._sequence = 0;
+
+        this._lastTimestamp = currentTimestamp;
+        if (return_type === 'string') return nextIDString(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID);
+        else return nextID(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID)
     }
 
     /**

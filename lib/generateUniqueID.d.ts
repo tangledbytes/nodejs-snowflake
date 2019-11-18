@@ -1,3 +1,4 @@
+declare type return_type = 'string' | 'number';
 /**
  * Constructs a UniqueID object which stores method for generation
  * of a unique 64 bit time sortable id and a method for retreiving
@@ -22,9 +23,9 @@ export declare class UniqueID {
     constructor(customEpoch?: number);
     /**
      * Generates a unique time sortable 64 bit number using native code
-     * @returns {number} The unique id
+     * @returns {string | number} the unique id
      */
-    getUniqueID(): number;
+    getUniqueID(return_type?: return_type): string | number;
     /**
      * Retrieves the epoch/unix timestamp at which the ID was generated
      * irrespective of the machine it was generated on, PROVIDED no or same
@@ -35,4 +36,5 @@ export declare class UniqueID {
     getTimestampFromID(id: number): number;
     getMacID(): string;
 }
+export {};
 //# sourceMappingURL=generateUniqueID.d.ts.map
