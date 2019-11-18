@@ -15,7 +15,6 @@ const maxSequence = Math.pow(2, SEQUENCE_BITS) - 1;
  * 
  * ```
  * const uid = new UniqueID();
- * await uid.init(); // If not initialised then an error will be thrown
  * const ID = uid.getUniqueID();
  * const IDCreateAt = uid.getTimestampFromID(ID);
  * const currentMacID = uid.getMacID();
@@ -30,13 +29,7 @@ export class UniqueID {
 
     constructor(customEpoch?: number) {
         this._CUSTOM_EPOCH = customEpoch || CUSTOM_EPOCH;
-    }
-
-    /**
-     * Initialise the mac id for internal computations
-     */
-    async init(): Promise<void> {
-        const { macIDString, macID } = await getMacID();
+        const { macIDString, macID } = getMacID();
         this._MACID = macIDString;
         this._FORMATTEDMACID = macID;
     }
@@ -65,7 +58,7 @@ export class UniqueID {
             return nextID(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID);
         }
         else {
-            throw new Error('Uninitialised class');
+            throw new Error('No MAC ADDRESS found to initialise');
         }
     }
 

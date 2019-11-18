@@ -1,4 +1,15 @@
-import { getMac } from 'getmac';
+import { networkInterfaces, platform } from 'os';
+const macRegex = /(?:[a-z0-9]{1,2}[:-]){5}[a-z0-9]{1,2}/i;
+
+function getMac(): string {
+    const interfaces = networkInterfaces()
+    for (const key in interfaces) {
+        for (const val of interfaces[key]) {
+            if (!val.internal && macRegex.test(val.mac)) return val.mac;
+        }
+    }
+    throw new Error('failed to get the MAC address');
+}
 
 interface MacID {
     /**
@@ -15,16 +26,13 @@ interface MacID {
 
 /**
  * Asynchronous function returns mac address of the machine
- * @returns {Promise<MacID>} A promise to an object containing macID and 
+ * @returns {MacID} An object containing macID and 
  * special representation of it
  */
-const getMacID = async (): Promise<MacID> => {
-    return new Promise((resolve, reject) => {
-        getMac((err: Error, macID: string) => {
-            if (err) reject(err);
-            resolve({ macID, macIDString: macID.split(':').join('') });
-        })
-    })
+const getMacID = (): MacID => {
+    const macID = getMac();
+    const splitCharacter = platform() === 'win32' ? '-' : ':';
+    return { macID, macIDString: macID.split(splitCharacter).join('') }
 }
 
 export { getMacID };

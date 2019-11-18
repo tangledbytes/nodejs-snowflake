@@ -8,7 +8,6 @@
  *
  * ```
  * const uid = new UniqueID();
- * await uid.init(); // If not initialised then an error will be thrown
  * const ID = uid.getUniqueID();
  * const IDCreateAt = uid.getTimestampFromID(ID);
  * const currentMacID = uid.getMacID();
@@ -21,10 +20,6 @@ export declare class UniqueID {
     private _sequence;
     private _FORMATTEDMACID;
     constructor(customEpoch?: number);
-    /**
-     * Initialise the mac id for internal computations
-     */
-    init(): Promise<void>;
     /**
      * Generates a unique time sortable 64 bit number using native code
      * @returns {number} The unique id

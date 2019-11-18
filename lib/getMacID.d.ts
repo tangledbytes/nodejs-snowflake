@@ -12,10 +12,10 @@ interface MacID {
 }
 /**
  * Asynchronous function returns mac address of the machine
- * @returns {Promise<MacID>} A promise to an object containing macID and
+ * @returns {MacID} An object containing macID and
  * special representation of it
  */
-declare const getMacID: () => Promise<MacID>;
+declare const getMacID: () => MacID;
 export { getMacID };
 export default getMacID;
 //# sourceMappingURL=getMacID.d.ts.map
