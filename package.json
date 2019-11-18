@@ -16,10 +16,11 @@
   ],
   "scripts": {
     "build": "node-gyp rebuild && tsc",
+    "build:napi": "node-gyp rebuild",
+    "build:tsc": "tsc",
     "clean": "node-gyp clean",
-    "tbuild": "tsc",
-    "napi-build": "node-gyp rebuild",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "benchmark": "npm run build:tsc && node lib/test"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,9 @@
   "author": "Utkarsh Srivastava",
   "license": "ISC",
   "devDependencies": {
+    "@types/minimist": "^1.2.0",
     "@types/node": "^12.12.8",
+    "minimist": "^1.2.0",
     "nanotimer": "^0.3.15",
     "node-gyp": "^6.0.1",
     "typescript": "^3.7.2"

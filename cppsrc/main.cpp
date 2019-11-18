@@ -56,7 +56,7 @@ int nodeID(std::string macID)
  * Next 10 bits are filled with the node/machine id (max size can be 1024)
  * Next 12 bits are filled with sequence which ensures that even if timestamp didn't change the value will be generated
  * 
- * Function can generate 4096 unique values within a millisecond without repeating values
+ * Function can theorotically generate 1024 unique values within a millisecond without repeating values
 */
 uint64_t nextID(uint64_t currentTimestamp, uint64_t lastTimestamp, uint64_t sequence, std::string macID)
 {
