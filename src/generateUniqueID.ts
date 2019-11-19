@@ -43,7 +43,7 @@ export class UniqueID {
         if (!this._MACID) throw new Error('No MAC ADDRESS found to initialise');
         this._snowflake = new Snowflake(this._MACID);
         this._nextID = config.returnNumber
-            ? (timestamp: bigint) => this._snowflake.getUniqueIDBigInt(timestamp)
+            ? (timestamp: number) => this._snowflake.getUniqueIDBigInt(timestamp)
             : (timestamp: string) => this._snowflake.getUniqueID(timestamp)
     }
 

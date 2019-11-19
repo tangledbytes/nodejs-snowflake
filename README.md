@@ -30,13 +30,15 @@ const uid = new UniqueID(config);
 const ID = uid.getUniqueID(); // 116321924208963580
 
 // Returns a 64 bit id as a bigint if returnAsNumber is set to true
-const ID_AS_NUMBER = uid.getUniqueID(); // 116321924208963580
+const ID_AS_BIGINT = uid.getUniqueID(); // 116321924208963580
+
+// Promisified getUniqueID
+uid.asyncGetUniqueID().then(id => console.log(id)) // 116321924208963580
 
 // Returns the epoch timestamp of creation of the id 
 // independent of the machine it was created
 uid.getTimestampFromID(ID); // 1574034107888
 
-uid.getTimestampFromID(ID_AS_NUMBER) // 1574034107888
 
 ```
 
