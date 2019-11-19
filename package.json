@@ -1,6 +1,6 @@
 {
   "name": "nodejs-snowflake",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
