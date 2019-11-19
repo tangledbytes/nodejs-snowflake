@@ -8,6 +8,10 @@ nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids
 The main id generation function is written in C++ using N-API which makes the process of id generation extremely fast. The usage of C++
 for id generation also guaratees that the generated number will be of size 64 bits.
 
+### NOTE
+The ID generator produces faster ids if the return type is bigint, but this option is disabled by default to the  
+time javascript bigint to string conversion will take. This conversion is thus by default handled by C++ internally.
+
 ## How to install
 
 ```
