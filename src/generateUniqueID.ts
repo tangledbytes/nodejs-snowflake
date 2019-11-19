@@ -1,18 +1,24 @@
-const { nextID, getTimestamp, nextIDString } = require('../build/Release/snowflake');
+const { Snowflake } = require('../build/Release/snowflake');
 import getMacID from './getMacID';
 
-const SEQUENCE_BITS = 12;
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
-const maxSequence = Math.pow(2, SEQUENCE_BITS) - 1;
 
-type return_type = 'string' | 'number';
+interface Config {
+    customEpoch?: number;
+    returnNumber?: boolean
+}
+
+const initConfig: Config = {
+    customEpoch: CUSTOM_EPOCH,
+    returnNumber: false
+}
 
 /**
  * Constructs a UniqueID object which stores method for generation
  * of a unique 64 bit time sortable id and a method for retreiving
  * time of creation for the ids
  * 
- * @param {number} [customEpoch = 1546300800000] A 42 bit long custom epoch
+ * @param {config} [customEpoch = 1546300800000] A 42 bit long custom epoch
  * in ms, defaults to 1546300800000 (01-01-2019)
  * 
  * ```
@@ -25,43 +31,36 @@ type return_type = 'string' | 'number';
 export class UniqueID {
     private _CUSTOM_EPOCH: number;
     private _MACID: string = '';
-    private _lastTimestamp = CUSTOM_EPOCH;
-    private _sequence = 0;
     private _FORMATTEDMACID: string = '';
+    private _snowflake: any;
+    private _nextID: Function;
 
-    constructor(customEpoch?: number) {
-        this._CUSTOM_EPOCH = customEpoch || CUSTOM_EPOCH;
+    constructor(config: Config = initConfig) {
+        this._CUSTOM_EPOCH = config.customEpoch || CUSTOM_EPOCH;
         const { macIDString, macID } = getMacID();
         this._MACID = macIDString;
         this._FORMATTEDMACID = macID;
         if (!this._MACID) throw new Error('No MAC ADDRESS found to initialise');
+        this._snowflake = new Snowflake(this._MACID);
+        this._nextID = config.returnNumber
+            ? (timestamp: bigint) => this._snowflake.getUniqueIDBigInt(timestamp)
+            : (timestamp: string) => this._snowflake.getUniqueID(timestamp)
     }
 
     /**
      * Generates a unique time sortable 64 bit number using native code
-     * @returns {string | number} the unique id
+     * @returns {string | bigint} the unique id
      */
-    getUniqueID(return_type: return_type = 'string'): string | number {
-        const currentTimestamp = Date.now();
-        const customCurrentTimeStamp = currentTimestamp - this._CUSTOM_EPOCH;
-        const customLastTimestamp = this._lastTimestamp - this._CUSTOM_EPOCH;
-        if (customCurrentTimeStamp === customLastTimestamp) {
-            this._sequence = (this._sequence + 1) & maxSequence;
-            if (this._sequence === 0) return this.getUniqueID(return_type);
-        }
-        else this._sequence = 0;
-
-        this._lastTimestamp = currentTimestamp;
-        if (return_type === 'string') return nextIDString(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID);
-        else return nextID(customCurrentTimeStamp, customLastTimestamp, this._sequence, this._MACID)
+    getUniqueID(): string | bigint {
+        return this._nextID(Date.now() - this._CUSTOM_EPOCH);
     }
 
     /**
      * Promisified unique id function
      * @returns {Promise<string | number>} promise to a unique 64 bit long id
      */
-    async asyncGetUniqueID(return_type: return_type = 'string'): Promise<string | number> {
-        return new Promise(resolve => resolve(this.getUniqueID(return_type)))
+    async asyncGetUniqueID(): Promise<string | bigint> {
+        return new Promise(resolve => resolve(this.getUniqueID()))
     }
 
     /**
@@ -71,8 +70,8 @@ export class UniqueID {
      * @param {number | string} id generated through getUniqueID method
      * @returns {number} timestamp of id creations
      */
-    getTimestampFromID(id: number | string): number {
-        return getTimestamp(id) + this._CUSTOM_EPOCH;
+    getTimestampFromID(id: bigint | string): number {
+        return this._snowflake.getTimestampFromID(id) + this._CUSTOM_EPOCH;
     }
 
     /**

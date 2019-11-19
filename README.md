@@ -21,14 +21,16 @@ const { UniqueID } = require('nodejs-flake');
 
 const uid = new UniqueID(); 
 
-// A custom epoch can also be passed into the constructor default is 1546300800000 (01-01-2019)
-// const uid = new UniqueID(customEpoch);
+// A config object can be passed into the constructor -> { customEpoch: some_value, returnAsNumber: true | false }
+// Default custom epoch is 1546300800000 (01-01-2019)
+// OR
+const uid = new UniqueID(config);
 
-// Returns a 64 bit id as a string
+// Returns a 64 bit id as a string if returnAsNumber is set to false
 const ID = uid.getUniqueID(); // 116321924208963580
 
-// Returns a 64 bit id as a number
-const ID_AS_NUMBER = uid.getUniqueID('number'); // 116321924208963580
+// Returns a 64 bit id as a bigint if returnAsNumber is set to true
+const ID_AS_NUMBER = uid.getUniqueID(); // 116321924208963580
 
 // Returns the epoch timestamp of creation of the id 
 // independent of the machine it was created

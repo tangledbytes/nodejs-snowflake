@@ -1,10 +1,13 @@
 /* cppsrc/main.cpp */
 
+#define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <cstdint>
 #include <string>
 #include <cmath>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +36,8 @@ int SEQUENCE_BITS = 12;
 */
 uint64_t maxNodeId = std::pow(2, NODE_ID_BITS) - 1;
 
+uint64_t maxSequence = std::pow(2, SEQUENCE_BITS) - 1;
+
 // ////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -48,6 +53,51 @@ int nodeID(std::string macID)
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
+class Snowflake : public Napi::ObjectWrap<Snowflake>
+{
+public:
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    Snowflake(const Napi::CallbackInfo &info);
+
+private:
+    static Napi::FunctionReference constructor;
+    uint64_t _lastTimestamp;
+    int _sequence;
+    std::string _macID;
+    int _nodeID;
+    Napi::Value getUniqueIDBigInt(const Napi::CallbackInfo &info);
+    Napi::Value getUniqueID(const Napi::CallbackInfo &info);
+    Napi::Value getTimestampFromID(const Napi::CallbackInfo &info);
+};
+
+Napi::Object Snowflake::Init(Napi::Env env, Napi::Object exports)
+{
+    // This method is used to hook the accessor and method callbacks
+    Napi::Function func = DefineClass(env, "Snowflake", {InstanceMethod("getUniqueIDBigInt", &Snowflake::getUniqueIDBigInt), InstanceMethod("getUniqueID", &Snowflake::getUniqueID), InstanceMethod("getTimestampFromID", &Snowflake::getTimestampFromID)});
+
+    // Create a peristent reference to the class constructor. This will allow
+    // a function called on a class prototype and a function
+    // called on instance of a class to be distinguished from each other.
+    constructor = Napi::Persistent(func);
+    // Call the SuppressDestruct() method on the static data prevent the calling
+    // to this destructor to reset the reference when the environment is no longer
+    // available.
+    constructor.SuppressDestruct();
+    exports.Set("Snowflake", func);
+    return exports;
+}
+
+Snowflake::Snowflake(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Snowflake>(info)
+{
+    Napi::String value = info[0].As<Napi::String>();
+    this->_macID = value.Utf8Value();
+    this->_nodeID = nodeID(this->_macID);
+    this->_lastTimestamp = 0;
+    this->_sequence = 0;
+}
+
+Napi::FunctionReference Snowflake::constructor;
+
 /**
  * Takes the current timestamp, last timestamp, sequence, and macID
  * and generates a 64 bit long integer by performing bitwise operations
@@ -58,158 +108,100 @@ int nodeID(std::string macID)
  * 
  * Function can theorotically generate 1024 unique values within a millisecond without repeating values
 */
-uint64_t nextID(uint64_t currentTimestamp, uint64_t lastTimestamp, uint64_t sequence, std::string macID)
-{
-    int NODEID = nodeID(macID);
-    uint64_t id = currentTimestamp << (TOTAL_BITS - EPOCH_BITS);
-    id |= (NODEID << (TOTAL_BITS - EPOCH_BITS - NODE_ID_BITS));
-    id |= sequence;
-
-    return id;
-}
-
-// ////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * N-API wrapper for the nextID function
-*/
-Napi::Number nextIDWrapped(const Napi::CallbackInfo &info)
+Napi::Value Snowflake::getUniqueIDBigInt(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    if (info.Length() < 4)
-    {
-        Napi::Error::New(env, "Insufficient arguments").ThrowAsJavaScriptException();
-    }
-    if (!info[0].IsNumber() || !info[1].IsNumber() || !info[2].IsNumber())
-    {
-        Napi::TypeError::New(env, "Number expected").ThrowAsJavaScriptException();
-    }
-    if (!info[3].IsString())
-    {
-        Napi::TypeError::New(env, "String expected").ThrowAsJavaScriptException();
-    }
-
     Napi::Number first = info[0].As<Napi::Number>();
-    Napi::Number second = info[1].As<Napi::Number>();
-    Napi::Number third = info[2].As<Napi::Number>();
-    Napi::String fourth = info[3].As<Napi::String>();
 
-    uint64_t returnValue = nextID(first.Int64Value(), second.Int64Value(), third.Int64Value(), fourth.Utf8Value());
+    uint64_t currentTimestamp = first.Int64Value();
 
-    return Napi::Number::New(env, returnValue);
+    if (currentTimestamp == this->_lastTimestamp)
+    {
+        this->_sequence = (this->_sequence + 1) & maxSequence;
+        if (this->_sequence == 0)
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+    else
+    {
+        this->_sequence = 0;
+    }
+
+    this->_lastTimestamp = currentTimestamp;
+
+    uint64_t id = currentTimestamp << (TOTAL_BITS - EPOCH_BITS);
+    id |= (this->_nodeID << (TOTAL_BITS - EPOCH_BITS - NODE_ID_BITS));
+    id |= this->_sequence;
+
+    return Napi::BigInt::New(env, id);
 }
-
-// ////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Convert generated number 64 bit integer to a string
 */
-std::string nextIDString(uint64_t currentTimestamp, uint64_t lastTimestamp, uint64_t sequence, std::string macID)
-{
-    return std::to_string(nextID(currentTimestamp, lastTimestamp, sequence, macID));
-}
-
-// ////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * N-API wrapper for the nextIDString function
-*/
-Napi::String nextIDStringWrapped(const Napi::CallbackInfo &info)
+Napi::Value Snowflake::getUniqueID(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    if (info.Length() < 4)
-    {
-        Napi::Error::New(env, "Insufficient arguments").ThrowAsJavaScriptException();
-    }
-    if (!info[0].IsNumber() || !info[1].IsNumber() || !info[2].IsNumber())
-    {
-        Napi::TypeError::New(env, "Number expected").ThrowAsJavaScriptException();
-    }
-    if (!info[3].IsString())
-    {
-        Napi::TypeError::New(env, "String expected").ThrowAsJavaScriptException();
-    }
-
     Napi::Number first = info[0].As<Napi::Number>();
-    Napi::Number second = info[1].As<Napi::Number>();
-    Napi::Number third = info[2].As<Napi::Number>();
-    Napi::String fourth = info[3].As<Napi::String>();
 
-    std::string returnValue = nextIDString(first.Int64Value(), second.Int64Value(), third.Int64Value(), fourth.Utf8Value());
+    uint64_t currentTimestamp = first.Int64Value();
 
-    return Napi::String::New(env, returnValue);
+    if (currentTimestamp == this->_lastTimestamp)
+    {
+        this->_sequence = (this->_sequence + 1) & maxSequence;
+        if (this->_sequence == 0)
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+    else
+    {
+        this->_sequence = 0;
+    }
+
+    this->_lastTimestamp = currentTimestamp;
+
+    uint64_t id = currentTimestamp << (TOTAL_BITS - EPOCH_BITS);
+    id |= (this->_nodeID << (TOTAL_BITS - EPOCH_BITS - NODE_ID_BITS));
+    id |= this->_sequence;
+
+    return Napi::String::New(env, std::to_string(id));
 }
-
-// ////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Returns timestamp at which the id was generated by retreiving
  * the first 42 bits of the id, which are filled with current timestamp
  * bits
 */
-uint64_t getTimestamp(uint64_t uniqueID)
-{
-    uint64_t timestamp = uniqueID >> (TOTAL_BITS - EPOCH_BITS);
-
-    return timestamp;
-}
-
-/**
- * Overload for string inputs
-*/
-uint64_t getTimestamp(std::string uniqueID)
-{
-    uint64_t ID = std::stoull(uniqueID);
-
-    uint64_t timestamp = ID >> (TOTAL_BITS - EPOCH_BITS);
-
-    return timestamp;
-}
-
-// ////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * N-API wrapper for getTimestamp function
-*/
-Napi::Number getTimestampWrapped(const Napi::CallbackInfo &info)
+Napi::Value Snowflake::getTimestampFromID(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
-    uint64_t returnValue = 0;
+    uint64_t uniqueID = 0;
 
-    if (info.Length() < 1)
-    {
-        Napi::Error::New(env, "No argument provided").ThrowAsJavaScriptException();
-    }
-    if (!info[0].IsNumber() && !info[0].IsString())
-    {
-        Napi::TypeError::New(env, "Expected a number or a string").ThrowAsJavaScriptException();
-    }
-
-    if (info[0].IsNumber())
-    {
-        Napi::Number first = info[0].As<Napi::Number>();
-
-        returnValue = getTimestamp(first.Int64Value());
-    }
-    else if (info[0].IsString())
+    if (info[0].IsString())
     {
         Napi::String first = info[0].As<Napi::String>();
 
-        returnValue = getTimestamp(first.Utf8Value());
+        uniqueID = std::stoull(first.Utf8Value());
+    }
+    else if (info[0].IsNumber())
+    {
+        uniqueID = info[0].As<Napi::Number>().Int64Value();
+    }
+    else
+    {
+        Napi::TypeError::New(env, "Number or string expected").ThrowAsJavaScriptException();
     }
 
-    return Napi::Number::New(env, returnValue);
+    uint64_t timestamp = uniqueID >> (TOTAL_BITS - EPOCH_BITS);
+
+    return Napi::Number::New(env, timestamp);
 }
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
 Napi::Object InitAll(Napi::Env env, Napi::Object exports)
 {
-    exports.Set("nextID", Napi::Function::New(env, nextIDWrapped));
-    exports.Set("nextIDString", Napi::Function::New(env, nextIDStringWrapped));
-    exports.Set("getTimestamp", Napi::Function::New(env, getTimestampWrapped));
+    Snowflake::Init(env, exports);
     return exports;
 }
 

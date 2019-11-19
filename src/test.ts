@@ -2,9 +2,11 @@ import UniqueID from './index';
 import NanoTimer from 'nanotimer';
 import parser from 'minimist';
 
-const { type, time, interval } = parser(process.argv.slice(2));
+const { type, time, interval, v: verbose } = parser(process.argv.slice(2));
 const timer = new NanoTimer();
-const uid = new UniqueID();
+const uid = new UniqueID({
+    returnNumber: type === "number" || type === "num"
+});
 
 const benchmark = (totalTime: string, Function: Function) => {
     console.log('[STARTING]')
@@ -19,4 +21,9 @@ const benchmark = (totalTime: string, Function: Function) => {
     }, [timer], totalTime)
 }
 
-benchmark(time || '1s', () => uid.getUniqueID(type || 'string'));
+const benchmarkFunction = () => {
+    if (verbose) return () => console.log(uid.getUniqueID());
+    else return () => uid.getUniqueID()
+}
+
+benchmark(time || '1s', benchmarkFunction());
