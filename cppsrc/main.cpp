@@ -53,6 +53,13 @@ int nodeID(std::string macID)
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
+uint64_t getCurrentTime()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
+// ////////////////////////////////////////////////////////////////////////////////////////
+
 class Snowflake : public Napi::ObjectWrap<Snowflake>
 {
 public:
@@ -62,6 +69,7 @@ public:
 private:
     static Napi::FunctionReference constructor;
     uint64_t _lastTimestamp;
+    uint64_t _CUSTOM_EPOCH;
     int _sequence;
     std::string _macID;
     int _nodeID;
@@ -90,10 +98,13 @@ Napi::Object Snowflake::Init(Napi::Env env, Napi::Object exports)
 Snowflake::Snowflake(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Snowflake>(info)
 {
     Napi::String value = info[0].As<Napi::String>();
+    Napi::Number EPOCH = info[1].As<Napi::Number>();
+
     this->_macID = value.Utf8Value();
     this->_nodeID = nodeID(this->_macID);
     this->_lastTimestamp = 0;
     this->_sequence = 0;
+    this->_CUSTOM_EPOCH = EPOCH.Int64Value();
 }
 
 Napi::FunctionReference Snowflake::constructor;
@@ -112,15 +123,16 @@ Napi::Value Snowflake::getUniqueIDBigInt(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    Napi::Number first = info[0].As<Napi::Number>();
-
-    uint64_t currentTimestamp = first.Int64Value();
+    uint64_t currentTimestamp = getCurrentTime();
 
     if (currentTimestamp == this->_lastTimestamp)
     {
         this->_sequence = (this->_sequence + 1) & maxSequence;
         if (this->_sequence == 0)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            currentTimestamp++;
+        }
     }
     else
     {
@@ -143,9 +155,7 @@ Napi::Value Snowflake::getUniqueID(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    Napi::Number first = info[0].As<Napi::Number>();
-
-    uint64_t currentTimestamp = first.Int64Value();
+    uint64_t currentTimestamp = getCurrentTime() - this->_CUSTOM_EPOCH;
 
     if (currentTimestamp == this->_lastTimestamp)
     {
