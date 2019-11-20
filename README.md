@@ -15,6 +15,7 @@ The ID generator produces ids faster if the return type is bigint, but this opti
 
 ```
 npm install nodejs-snowflake --save
+yarn add nodejs-snowflake
 ```
 
 ## Usage
