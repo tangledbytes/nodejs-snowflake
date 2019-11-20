@@ -117,13 +117,13 @@ Napi::FunctionReference Snowflake::constructor;
  * Next 10 bits are filled with the node/machine id (max size can be 1024)
  * Next 12 bits are filled with sequence which ensures that even if timestamp didn't change the value will be generated
  * 
- * Function can theorotically generate 1024 unique values within a millisecond without repeating values
+ * Function can theorotically generate 4096 unique values within a millisecond without repeating values
 */
 Napi::Value Snowflake::getUniqueIDBigInt(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
 
-    uint64_t currentTimestamp = getCurrentTime();
+    uint64_t currentTimestamp = getCurrentTime() - this->_CUSTOM_EPOCH;
 
     if (currentTimestamp == this->_lastTimestamp)
     {
@@ -161,7 +161,10 @@ Napi::Value Snowflake::getUniqueID(const Napi::CallbackInfo &info)
     {
         this->_sequence = (this->_sequence + 1) & maxSequence;
         if (this->_sequence == 0)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            currentTimestamp++;
+        }
     }
     else
     {
