@@ -21,7 +21,7 @@ yarn add nodejs-snowflake
 ## Usage
 ```javascript
 
-const { UniqueID } = require('nodejs-flake');
+const { UniqueID } = require('nodejs-snowflake');
 
 const uid = new UniqueID(); 
 
