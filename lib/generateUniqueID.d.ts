@@ -1,28 +1,27 @@
 interface Config {
     customEpoch?: number;
     returnNumber?: boolean;
+    machineID?: number;
 }
 /**
  * Constructs a UniqueID object which stores method for generation
  * of a unique 64 bit time sortable id and a method for retreiving
  * time of creation for the ids
  *
- * @param {config} [customEpoch = 1546300800000] A 42 bit long custom epoch
+ * @param {config} [customEpoch = 1546300800000] A 32 bit long custom epoch
  * in ms, defaults to 1546300800000 (01-01-2019)
  *
  * ```
  * const uid = new UniqueID();
  * const ID = uid.getUniqueID();
  * const IDCreateAt = uid.getTimestampFromID(ID);
- * const currentMacID = uid.getMacID();
  * ```
  */
 export declare class UniqueID {
     private _CUSTOM_EPOCH;
-    private _MACID;
-    private _FORMATTEDMACID;
     private _snowflake;
-    private _nextID;
+    private _MACHINE_ID?;
+    private returnNumber;
     constructor(config?: Config);
     /**
      * Generates a unique time sortable 64 bit number using native code
@@ -42,10 +41,7 @@ export declare class UniqueID {
      * @returns {number} timestamp of id creations
      */
     getTimestampFromID(id: bigint | string): number;
-    /**
-     * @returns MAC address being used internally
-     */
-    get macID(): string;
+    getMachineIDFromID(id: bigint | string): number;
 }
 export {};
 //# sourceMappingURL=generateUniqueID.d.ts.map

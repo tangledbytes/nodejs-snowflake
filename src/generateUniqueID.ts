@@ -1,11 +1,11 @@
 const { Snowflake } = require('../build/Release/snowflake');
-import getMacID from './getMacID';
 
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
 
 interface Config {
     customEpoch?: number;
-    returnNumber?: boolean
+    returnNumber?: boolean;
+    machineID?: number;
 }
 
 const initConfig: Config = {
@@ -18,33 +18,34 @@ const initConfig: Config = {
  * of a unique 64 bit time sortable id and a method for retreiving
  * time of creation for the ids
  * 
- * @param {config} [customEpoch = 1546300800000] A 42 bit long custom epoch
+ * @param {config} [customEpoch = 1546300800000] A 32 bit long custom epoch
  * in ms, defaults to 1546300800000 (01-01-2019)
  * 
  * ```
  * const uid = new UniqueID();
  * const ID = uid.getUniqueID();
  * const IDCreateAt = uid.getTimestampFromID(ID);
- * const currentMacID = uid.getMacID();
  * ```
  */
 export class UniqueID {
     private _CUSTOM_EPOCH: number;
-    private _MACID: string = '';
-    private _FORMATTEDMACID: string = '';
     private _snowflake: any;
-    private _nextID: Function;
+    private _MACHINE_ID?: number;
+    private returnNumber = true;
 
     constructor(config: Config = initConfig) {
         this._CUSTOM_EPOCH = config.customEpoch || CUSTOM_EPOCH;
-        const { macIDString, macID } = getMacID();
-        this._MACID = macIDString;
-        this._FORMATTEDMACID = macID;
-        if (!this._MACID) throw new Error('No MAC ADDRESS found to initialise');
-        this._snowflake = new Snowflake(this._MACID, this._CUSTOM_EPOCH);
-        this._nextID = config.returnNumber
-            ? () => this._snowflake.getUniqueIDBigInt()
-            : () => this._snowflake.getUniqueID()
+        this._MACHINE_ID = config.machineID;
+        this.returnNumber = !!config.returnNumber;
+
+        if ((this._MACHINE_ID !== undefined) && !isNaN(this._MACHINE_ID)) {
+            if (!Number.isInteger(this._MACHINE_ID)) throw Error("Machine Id should be a decimal number");
+            if (this._MACHINE_ID > (1 << 12) - 1) throw Error("Maximum value of machine id can be 2^12 - 1 (4095)")
+            this._snowflake = new Snowflake(this._CUSTOM_EPOCH, this._MACHINE_ID);
+            return;
+        }
+
+        this._snowflake = new Snowflake(this._CUSTOM_EPOCH);
     }
 
     /**
@@ -52,7 +53,10 @@ export class UniqueID {
      * @returns {string | bigint} the unique id
      */
     getUniqueID(): string | bigint {
-        return this._nextID();
+        const val = this._snowflake.getUniqueID()
+        if (!this.returnNumber)
+            return val.toString();
+        return val
     }
 
     /**
@@ -71,13 +75,10 @@ export class UniqueID {
      * @returns {number} timestamp of id creations
      */
     getTimestampFromID(id: bigint | string): number {
-        return this._snowflake.getTimestampFromID(id) + this._CUSTOM_EPOCH;
+        return this._snowflake.getTimestampFromID(id);
     }
 
-    /**
-     * @returns MAC address being used internally
-     */
-    get macID(): string {
-        return this._FORMATTEDMACID;
+    getMachineIDFromID(id: bigint | string): number {
+        return this._snowflake.getNodeIDFromID(id);
     }
 }
