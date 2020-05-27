@@ -86,7 +86,7 @@ Snowflake::Snowflake(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Snowflak
 {
     auto argLen = info.Length();
     if (argLen != 2)
-        Napi::TypeError::New(env, "Expected two arguments.").ThrowAsJavaScriptException();
+        Napi::TypeError::New(info.Env(), "Expected two arguments.").ThrowAsJavaScriptException();
 
     this->_CUSTOM_EPOCH = info[0].As<Napi::Number>().Int64Value();
     // If the number is bigger than maxNodeId than those bits will be fall off
