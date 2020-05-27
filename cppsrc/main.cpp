@@ -1,6 +1,5 @@
 /* cppsrc/main.cpp */
 
-#define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <cstdint>
 #include <string>
