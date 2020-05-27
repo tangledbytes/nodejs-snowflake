@@ -1,6 +1,6 @@
 {
   "name": "nodejs-snowflake",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,7 +19,7 @@
     "build": "node-gyp rebuild && tsc",
     "build:napi": "node-gyp rebuild",
     "build:tsc": "tsc",
-    "install": "prebuild-install -d || node-gyp rebuild",
+    "install": "prebuild-install || node-gyp rebuild",
     "benchmark": "npm run build:tsc && node lib/test"
   },
   "repository": {
