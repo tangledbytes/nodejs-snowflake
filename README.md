@@ -5,7 +5,8 @@
 ![Dependencies](https://img.shields.io/david/utkarsh-pro/nodejs-snowflake)
 
 nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids written for distributed systems.  
-The main id generation function is written in C++ using N-API which makes the process of id generation extremely fast. The usage of C++ for id generation also guaratees that the generated number will be of size 64 bits.
+The main id generation function is written in C++ using N-API which makes the process of id generation extremely fast. The usage of C++ for id generation also guaratees that the generated number will be of size 64 bits.  
+**Now Supports machine id extraction from the generated ids, even if they were generated on different machines**
 
 ## How to install
 
