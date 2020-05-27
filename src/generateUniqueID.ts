@@ -1,6 +1,7 @@
 const { Snowflake } = require('../build/Release/snowflake');
 
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
+const MAX_MACHINE_ID = (1 << 12) - 1;
 
 interface Config {
     customEpoch?: number;
@@ -18,7 +19,7 @@ const initConfig: Config = {
  * of a unique 64 bit time sortable id and a method for retreiving
  * time of creation for the ids
  * 
- * @param {config} [customEpoch = 1546300800000] A 32 bit long custom epoch
+ * @param {config} config
  * in ms, defaults to 1546300800000 (01-01-2019)
  * 
  * ```
@@ -30,22 +31,22 @@ const initConfig: Config = {
 export class UniqueID {
     private _CUSTOM_EPOCH: number;
     private _snowflake: any;
-    private _MACHINE_ID?: number;
+    private _MACHINE_ID: number;
     private returnNumber = true;
 
     constructor(config: Config = initConfig) {
         this._CUSTOM_EPOCH = config.customEpoch || CUSTOM_EPOCH;
-        this._MACHINE_ID = config.machineID;
         this.returnNumber = !!config.returnNumber;
 
-        if ((this._MACHINE_ID !== undefined) && !isNaN(this._MACHINE_ID)) {
-            if (!Number.isInteger(this._MACHINE_ID)) throw Error("Machine Id should be a decimal number");
-            if (this._MACHINE_ID > (1 << 12) - 1) throw Error("Maximum value of machine id can be 2^12 - 1 (4095)")
-            this._snowflake = new Snowflake(this._CUSTOM_EPOCH, this._MACHINE_ID);
-            return;
-        }
+        // A 12 bit machine id, if not passed in then a random id will be used
+        // Ternary operator was used to make sure "0" isn't considered to be falsy.
+        this._MACHINE_ID = config.machineID !== undefined ? config.machineID : Math.floor(Math.random() * MAX_MACHINE_ID);
 
-        this._snowflake = new Snowflake(this._CUSTOM_EPOCH);
+        // Check if the number is satisfies all the conditions
+        if (!Number.isInteger(this._MACHINE_ID)) throw Error("Machine Id should be a decimal number");
+        if (this._MACHINE_ID > MAX_MACHINE_ID) throw Error("Maximum value of machine id can be 2^12 - 1 (4095)")
+
+        this._snowflake = new Snowflake(this._CUSTOM_EPOCH, this._MACHINE_ID);
     }
 
     /**
@@ -78,7 +79,21 @@ export class UniqueID {
         return this._snowflake.getTimestampFromID(id);
     }
 
+    /**
+     * Retrieves the 12 bit machine id where the id was generated,
+     * irrespective of the machine it was generated on.
+     * @param id 
+     */
     getMachineIDFromID(id: bigint | string): number {
         return this._snowflake.getNodeIDFromID(id);
+    }
+
+    /**
+     * Machine ID of the current machine. This ID is of 12 bit.
+     * This can be either provided by the user (preferred) or will be assigned
+     * randomly.
+     */
+    get machineID() {
+        return this._MACHINE_ID;
     }
 }

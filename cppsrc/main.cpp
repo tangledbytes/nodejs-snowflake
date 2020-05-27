@@ -8,7 +8,6 @@
 #include <chrono>
 #include <thread>
 
-#include "ipaddress.h"
 #include "generate_hash.h"
 
 // ////////////////////////////////////////////////////////////////////////////////////////
@@ -39,21 +38,6 @@ constexpr int SEQUENCE_BITS = 10;
 constexpr uint64_t maxNodeId = (1 << NODE_ID_BITS) - 1;
 
 constexpr uint64_t maxSequence = (1 << SEQUENCE_BITS) - 1;
-
-// ////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Covert the macID string passed as a parameter
- * into a hash value and return the bitwise & with maxNodeID
- * so that the hashed value is always smaller than maxNodeID 
- * which is 10 bits in size
-*/
-int nodeID()
-{
-    char ip[16];
-    getIP(ip);
-    return generate_hash(ip, 16) & maxNodeId;
-}
 
 // ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,16 +85,12 @@ Napi::Object Snowflake::Init(Napi::Env env, Napi::Object exports)
 Snowflake::Snowflake(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Snowflake>(info)
 {
     auto argLen = info.Length();
+    if (argLen != 2)
+        Napi::TypeError::New(env, "Expected two arguments.").ThrowAsJavaScriptException();
+
     this->_CUSTOM_EPOCH = info[0].As<Napi::Number>().Int64Value();
-    switch (argLen)
-    {
-    case 2:
-        this->_nodeID = info[1].As<Napi::Number>().Int32Value() & maxNodeId;
-        break;
-    default:
-        this->_nodeID = nodeID();
-        break;
-    }
+    // If the number is bigger than maxNodeId than those bits will be fall off
+    this->_nodeID = info[1].As<Napi::Number>().Int32Value() & maxNodeId;
 
     this->_lastTimestamp = 0;
     this->_sequence = 0;
