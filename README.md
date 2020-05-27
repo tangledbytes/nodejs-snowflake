@@ -23,7 +23,7 @@ The ID generator produces ids faster if the return type is bigint, but this opti
 const { UniqueID } = require('nodejs-snowflake');
 
 const uid = new UniqueID({
-    returnAsNumber: true
+    returnNumber: true
 }); 
 
 const ID = uid.getUniqueID(); // This id is in javascript bigint format
@@ -64,7 +64,7 @@ UniqueID constructor takes in the following configuration
 
 ```javascript
 {
-    returnAsNumber: boolean, // Defaults to false. If set to true, the returned ids will be of type bigint or else of type string
+    returnNumber: boolean, // Defaults to false. If set to true, the returned ids will be of type bigint or else of type string
     customEpoch: number, // Defaults to 1546300800000 (01-01-2019). This is UNIX timestamp in ms
     machineID: number // A value ranging between 0 - 4095. If not provided then a random value will be used
 }
