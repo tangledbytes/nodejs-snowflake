@@ -1,3 +1,5 @@
+import isFalsy from './isFalsy'
+
 const { Snowflake } = require('../build/Release/snowflake');
 
 const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
@@ -13,6 +15,8 @@ const initConfig: Config = {
     customEpoch: CUSTOM_EPOCH,
     returnNumber: false
 }
+
+
 
 /**
  * Constructs a UniqueID object which stores method for generation
@@ -40,7 +44,9 @@ export class UniqueID {
 
         // A 12 bit machine id, if not passed in then a random id will be used
         // Ternary operator was used to make sure "0" isn't considered to be falsy.
-        this._MACHINE_ID = config.machineID !== undefined ? config.machineID : Math.floor(Math.random() * MAX_MACHINE_ID);
+        this._MACHINE_ID = (
+            !isFalsy(config.machineID) ? config.machineID : Math.floor(Math.random() * MAX_MACHINE_ID)
+        ) as number;
 
         // Check if the number is satisfies all the conditions
         if (!Number.isInteger(this._MACHINE_ID)) throw Error("Machine Id should be a decimal number");
