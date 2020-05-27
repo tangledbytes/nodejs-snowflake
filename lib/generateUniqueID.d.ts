@@ -8,7 +8,7 @@ interface Config {
  * of a unique 64 bit time sortable id and a method for retreiving
  * time of creation for the ids
  *
- * @param {config} [customEpoch = 1546300800000] A 32 bit long custom epoch
+ * @param {config} config
  * in ms, defaults to 1546300800000 (01-01-2019)
  *
  * ```
@@ -20,7 +20,7 @@ interface Config {
 export declare class UniqueID {
     private _CUSTOM_EPOCH;
     private _snowflake;
-    private _MACHINE_ID?;
+    private _MACHINE_ID;
     private returnNumber;
     constructor(config?: Config);
     /**
@@ -41,7 +41,18 @@ export declare class UniqueID {
      * @returns {number} timestamp of id creations
      */
     getTimestampFromID(id: bigint | string): number;
+    /**
+     * Retrieves the 12 bit machine id where the id was generated,
+     * irrespective of the machine it was generated on.
+     * @param id
+     */
     getMachineIDFromID(id: bigint | string): number;
+    /**
+     * Machine ID of the current machine. This ID is of 12 bit.
+     * This can be either provided by the user (preferred) or will be assigned
+     * randomly.
+     */
+    get machineID(): number;
 }
 export {};
 //# sourceMappingURL=generateUniqueID.d.ts.map

@@ -5,8 +5,7 @@
         "cflags_cc!": [ "-fno-exceptions" ],
         "sources": [
             "cppsrc/main.cpp",
-            "cppsrc/generate_hash.cpp",
-            "cppsrc/ipaddress.cpp"
+            "cppsrc/generate_hash.cpp"
         ],
         "cflags_cc": [
             "-std=c++17"
