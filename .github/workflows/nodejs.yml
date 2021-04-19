@@ -1,18 +1,19 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Releases cross platform binaries for nodejs-snowflake
+name: Releases cross platform binaries for nodejs-snowflake and publishes to NPM
 
 on:
   push:
-    branches: [master]
+    tags:
+      - '*'
 
 jobs:
   build:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [12.17.0]
+        node-version: [12.17.0, 14.16.0]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +21,23 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+      - run: npm ci
+
+      - name: Build NodeJS Snowflake
+      - run: npm run build
+
+      - name: Run Tests
+      - run: npm t
+
+      - name: Publish artifacts on Github
       - run: |
-          npm i
           npm i -g prebuild
-          prebuild --all -r napi -u ${{ secrets.GITHUB_TOKEN }}
+          prebuild --all -r napi -u ${{ secrets.GITHUB_TOKEN }} --strip
+          
+      - name: Publish Package to NPM
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${GITHUB_REF##*/}
+
