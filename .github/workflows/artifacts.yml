@@ -1,4 +1,4 @@
-name: Releases cross platform binaries for nodejs-snowflake and publishes to NPM
+name: Releases cross platform binaries for nodejs-snowflake
 
 on:
   push:
@@ -36,5 +36,4 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          tag: ${GITHUB_REF##*/}
 
