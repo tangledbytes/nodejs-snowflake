@@ -6,7 +6,12 @@
 
 nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids written for distributed systems.  
 The main id generation function is written in C++ using N-API which makes the process of id generation extremely fast. The usage of C++ for id generation also guaratees that the generated number will be of size 64 bits.  
-**Now Supports machine id extraction from the generated ids, even if they were generated on different machines**
+
+**Version 1.6 Updates**
+- Add `GetIDFromTimestamp` function which can be used in database queries.  
+
+**Version 1.5 Updates**
+- Add `GetMachineIDFromTimestamp` help extracting machine id from the generated ids, even if they were generated on different machines
 
 ## How to install
 
@@ -89,6 +94,18 @@ Get the machine id of the machine on which the token was generated. This method 
 const mid = uid.getMachineIDFromID(id); // Here id can be either as as string or as a bigint
 
 console.log(mid); // 2345 -> This is the 12 bit long machine id where this token was generated
+
+```
+
+### Get ID corresponding to a Timestamp
+This can be extremely helpful in writing database queries where the requirement could be to get entries created after a certain timestamp.
+
+```javascript
+...
+
+const id = uid.IDFromTimestamp(Date.now()); // Here id will always be BigInt
+
+console.log(id); // A 64 bit id is returned corresponding to the timestamp given
 
 ```
 
