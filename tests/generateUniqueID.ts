@@ -70,7 +70,7 @@ describe("Snowflake with custom machine ID configuration", () => {
 
     const ts = uid.getTimestampFromID(id);
 
-    expect(ts).to.be.greaterThanOrEqual(before).and.lessThanOrEqual(after);
+    expect(ts).to.be.greaterThanOrEqual(before - 1).and.lessThanOrEqual(after + 1);
   });
 
   it("should return current machine's id from the generated id", () => {
