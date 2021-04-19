@@ -1,4 +1,4 @@
-name: Releases cross platform binaries for nodejs-snowflake and publishes to NPM
+name: Runs tests
 
 on:
   pull_request:
