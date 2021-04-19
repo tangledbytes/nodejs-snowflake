@@ -21,7 +21,9 @@ describe("Snowflake with default configuration", () => {
 
     const ts = uid.getTimestampFromID(id);
 
-    expect(ts).to.be.greaterThanOrEqual(before - ERROR_MARGIN).and.lessThanOrEqual(after + ERROR_MARGIN);
+    expect(ts)
+      .to.be.greaterThanOrEqual(before - ERROR_MARGIN)
+      .and.lessThanOrEqual(after + ERROR_MARGIN);
   });
 
   it("should return machine id", () => {
@@ -63,7 +65,7 @@ describe("Snowflake with custom machine ID configuration", () => {
   });
 
   it("should return timestamp of creation", () => {
-    const ERROR_MARGIN = 2
+    const ERROR_MARGIN = 2;
     const uid = new UniqueID({ machineID: 1000 });
 
     const before = Date.now(); // Before calling
@@ -72,7 +74,9 @@ describe("Snowflake with custom machine ID configuration", () => {
 
     const ts = uid.getTimestampFromID(id);
 
-    expect(ts).to.be.greaterThanOrEqual(before - ERROR_MARGIN).and.lessThanOrEqual(after + ERROR_MARGIN);
+    expect(ts)
+      .to.be.greaterThanOrEqual(before - ERROR_MARGIN)
+      .and.lessThanOrEqual(after + ERROR_MARGIN);
   });
 
   it("should return current machine's id from the generated id", () => {
@@ -98,7 +102,7 @@ describe("Snowflake with custom machine ID configuration", () => {
 describe("Snowflake stress test", () => {
   it("should produce unique ids only", () => {
     const SECOND = 1e3;
-    const RUN_FOR_SECONDS = 1;
+    const RUN_FOR_SECONDS = 0.01;
     const mid = 1000;
     const uid = new UniqueID({ machineID: mid });
 
@@ -111,5 +115,5 @@ describe("Snowflake stress test", () => {
     const set = new Set(ids);
 
     expect(set.size).to.equal(ids.length);
-  }).timeout(5000);
+  });
 });
