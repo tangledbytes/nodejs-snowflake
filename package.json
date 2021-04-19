@@ -1,6 +1,6 @@
 {
   "name": "nodejs-snowflake",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -16,11 +16,12 @@
     "n-api"
   ],
   "scripts": {
-    "build": "node-gyp rebuild && tsc",
+    "build": "npm run build:napi && npm run build:tsc",
     "build:napi": "node-gyp rebuild",
     "build:tsc": "tsc",
-    "install": "prebuild-install || node-gyp rebuild",
-    "benchmark": "npm run build:tsc && node lib/test"
+    "install": "prebuild-install -r napi|| node-gyp rebuild",
+    "benchmark": "npm run build:tsc && node lib/test",
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,8 @@
   ],
   "binary": {
     "napi_versions": [
-      6
+      6,
+      7
     ]
   },
   "author": "Utkarsh Srivastava <utkarsh@sagacious.dev>",
@@ -42,17 +44,22 @@
   },
   "license": "Apache 2.0",
   "devDependencies": {
+    "@types/chai": "^4.2.16",
     "@types/minimist": "^1.2.0",
+    "@types/mocha": "^8.2.2",
     "@types/node": "^12.12.42",
+    "chai": "^4.3.4",
     "minimist": "^1.2.5",
+    "mocha": "^8.3.2",
     "nanotimer": "^0.3.15",
     "node-gyp": "^6.1.0",
+    "prebuild": "^3.0.0",
+    "ts-node": "^9.1.1",
     "typescript": "^3.9.3"
   },
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^3.0.0",
-    "prebuild": "^3.0.0",
     "prebuild-install": "5.3.4"
   }
 }
