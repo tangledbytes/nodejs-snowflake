@@ -11,7 +11,7 @@ The main id generation function is written in C++ using N-API which makes the pr
 - Add `GetIDFromTimestamp` function which can be used in database queries.  
 
 **Version 1.5 Updates**
-- Add `GetMachineIDFromTimestamp` help extracting machine id from the generated ids, even if they were generated on different machines
+- Add `GetMachineIDFromID` help extracting machine id from the generated ids, even if they were generated on different machines
 
 ## How to install
 
