@@ -6,8 +6,17 @@ const CUSTOM_EPOCH = 1546300800000; // 01-01-2019
 const MAX_MACHINE_ID = (1 << 12) - 1;
 
 interface Config {
+  /**
+   * Defaults to 1546300800000 (01-01-2019). This is UNIX timestamp in ms
+   */
   customEpoch?: number;
+  /**
+   * Defaults to false. If set to true, the returned ids will be of type BigInt or else of type string
+   */
   returnNumber?: boolean;
+  /**
+   * A value ranging between 0 - 4095. If not provided then a random value will be used
+   */
   machineID?: number;
 }
 
