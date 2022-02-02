@@ -10,7 +10,7 @@
 nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids written for distributed systems.  
 The main ID generation function is written in Rust which interoperates with NodeJS via WASM, this makes the process of ID generation extremely fast.
 
-> ⚠️ Version 2 Alert! Version 2 of `nodejs-snowflake` has a lot of breaking changes and is a complete rewrite. Consider going through entire doc to understand the migration path.
+> ⚠️ Version 2 Alert! Version 2 of `nodejs-snowflake` has a lot of breaking changes and is a complete rewrite. Consider going through entire doc to understand the migration path. Checkout [Version 2 PR Notes](https://github.com/utkarsh-pro/nodejs-snowflake/pull/14) for details.
 
 ## How to install
 
