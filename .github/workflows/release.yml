@@ -20,7 +20,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
-          artifacts: "pkg/nodejs_snowflake.wasm"
+          artifacts: "pkg/nodejs_snowflake_bg.wasm"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish packages to NPM
         env:
