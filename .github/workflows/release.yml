@@ -1,0 +1,34 @@
+name: Releases
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v2
+      - name: Setup Wasm Pack
+        uses: jetli/wasm-pack-action@v0.3.0
+      - name: Build the WASM artifact
+        env:
+          GIT_TAG: ${{ github.ref_name }}
+        run: |
+          wasm-pack build --target node
+          mv pkg/nodejs_snowflake_bg.wasm pkg/nodejs_snowflake_${GIT_TAG}.wasm
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        env:
+          GIT_TAG: ${{ github.ref_name }}
+        with:
+          generateReleaseNotes: true
+          artifacts: "pkg/nodejs_snowflake_${GIT_TAG}.wasm"
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish packages to NPM
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: wasm-pack publish
