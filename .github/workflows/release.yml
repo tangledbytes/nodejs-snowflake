@@ -15,20 +15,16 @@ jobs:
       - name: Setup Wasm Pack
         uses: jetli/wasm-pack-action@v0.3.0
       - name: Build the WASM artifact
-        env:
-          GIT_TAG: ${{ github.ref_name }}
-        run: |
-          wasm-pack build --target nodejs
-          mv pkg/nodejs_snowflake_bg.wasm pkg/nodejs_snowflake_${GIT_TAG}.wasm
+        run: wasm-pack build --target nodejs
       - name: Create Release
         uses: ncipollo/release-action@v1
-        env:
-          GIT_TAG: ${{ github.ref_name }}
         with:
           generateReleaseNotes: true
-          artifacts: "pkg/nodejs_snowflake_${GIT_TAG}.wasm"
+          artifacts: "pkg/nodejs_snowflake.wasm"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish packages to NPM
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: wasm-pack publish
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+          wasm-pack publish
