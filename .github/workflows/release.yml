@@ -18,7 +18,7 @@ jobs:
         env:
           GIT_TAG: ${{ github.ref_name }}
         run: |
-          wasm-pack build --target node
+          wasm-pack build --target nodejs
           mv pkg/nodejs_snowflake_bg.wasm pkg/nodejs_snowflake_${GIT_TAG}.wasm
       - name: Create Release
         uses: ncipollo/release-action@v1
