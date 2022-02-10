@@ -61,7 +61,7 @@ Get the timestamp of creation of the ID can be extracted by using this method. T
 ...
 
 // Pass the custom epoch that was used to generate this ID
-const ts = Snowflake.timestampFromId(id, uid.customEpoch());
+const ts = Snowflake.timestampFromID(id, uid.customEpoch());
 
 console.log(ts) // Timestamp of creation of the id
 
