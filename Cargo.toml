@@ -1,6 +1,6 @@
 [package]
 name = "nodejs-snowflake"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["Utkarsh Srivastava <utkarsh@sagacious.dev>"]
 edition = "2021"
 description = "Generate time sortable 64 bits unique ids for distributed systems (inspired from twitter snowflake)"
