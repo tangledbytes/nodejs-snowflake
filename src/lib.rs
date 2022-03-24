@@ -32,7 +32,7 @@ const CUSTOM_TS: &'static str = r#"
 export interface SnowflakeOpts {
     custom_epoch?: number; 
     instance_id?: number;
-};
+}
 "#;
 
 //// HELPER TYPES //////////////////////////////////////////////////////////////////////////
