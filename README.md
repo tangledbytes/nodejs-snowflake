@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/npm/l/nodejs-snowflake)
 ![Top Language](https://img.shields.io/github/languages/top/utkarsh-pro/nodejs-snowflake)
 ![Version](https://img.shields.io/npm/v/nodejs-snowflake)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/utkarsh-pro/nodejs-snowflake/Releases)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/utkarsh-pro/nodejs-snowflake/release.yml?branch=master)
 
 nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids written for distributed systems.  
 The main ID generation function is written in Rust which interoperates with NodeJS via WASM, this makes the process of ID generation extremely fast.
