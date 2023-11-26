@@ -1,16 +1,16 @@
 # nodejs-snowflake
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/utkarsh-pro/nodejs-snowflake/graphs/commit-activity)
-[![GitHub issues](https://img.shields.io/github/issues/utkarsh-pro/nodejs-snowflake.svg)](https://github.com/utkarsh-pro/nodejs-snowflake/issues/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/tangledbytes/nodejs-snowflake/graphs/commit-activity)
+[![GitHub issues](https://img.shields.io/github/issues/tangledbytes/nodejs-snowflake.svg)](https://github.com/tangledbytes/nodejs-snowflake/issues/)
 ![License](https://img.shields.io/npm/l/nodejs-snowflake)
-![Top Language](https://img.shields.io/github/languages/top/utkarsh-pro/nodejs-snowflake)
+![Top Language](https://img.shields.io/github/languages/top/tangledbytes/nodejs-snowflake)
 ![Version](https://img.shields.io/npm/v/nodejs-snowflake)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/utkarsh-pro/nodejs-snowflake/Releases)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tangledbytes/nodejs-snowflake/release.yml?branch=master)
 
 nodejs-snowflake is a fast and reliable way to generate time sortable 64 bit ids written for distributed systems.  
 The main ID generation function is written in Rust which interoperates with NodeJS via WASM, this makes the process of ID generation extremely fast.
 
-> ⚠️ Version 2 Alert! Version 2 of `nodejs-snowflake` has a lot of breaking changes and is a complete rewrite. Consider going through entire doc to understand the migration path. Checkout [Version 2 PR Notes](https://github.com/utkarsh-pro/nodejs-snowflake/pull/14) for details.
+> ⚠️ Version 2 Alert! Version 2 of `nodejs-snowflake` has a lot of breaking changes and is a complete rewrite. Consider going through entire doc to understand the migration path. Checkout [Version 2 PR Notes](https://github.com/tangledbytes/nodejs-snowflake/pull/14) for details.
 
 ## How to install
 
